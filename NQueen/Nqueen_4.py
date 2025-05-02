@@ -1,0 +1,47 @@
+def print_solution(board, N):
+    for row in board:
+        print(" ".join(row))
+    print()
+
+def is_safe(board, row, col, N):
+    # Check this row on the left
+    for i in range(col):
+        if board[row][i] == 'Q':
+            return False
+
+    # Check upper diagonal on the left
+    for i, j in zip(range(row, -1, -1), range(col, -1, -1)):
+        if board[i][j] == 'Q':
+            return False
+
+    # Check lower diagonal on the left
+    for i, j in zip(range(row, N), range(col, -1, -1)):
+        if board[i][j] == 'Q':
+            return False
+
+    return True
+
+def solve_n_queens_util(board, col, N):
+    if col >= N:
+        print_solution(board, N)
+        return True
+
+    res = False
+    for i in range(N):
+        if is_safe(board, i, col, N):
+            board[i][col] = 'Q'
+            res = solve_n_queens_util(board, col + 1, N) or res
+            board[i][col] = '.'  # Backtrack
+
+    return res
+
+def solve_n_queens(N):
+    board = [['.'] * N for _ in range(N)]  # Initialize board with '.'
+    if not solve_n_queens_util(board, 0, N):
+        print("No solution exists")
+    else:
+        print("Solutions found!")
+
+# User input
+N = int(input("Enter the number of queens: "))
+solve_n_queens(N)
