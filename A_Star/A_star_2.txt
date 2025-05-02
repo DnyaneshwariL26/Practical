@@ -1,0 +1,120 @@
+import heapq
+
+class Graph:
+    def __init__(self):
+        self.graph = {}
+        self.heuristic = {}
+
+    def add_edge(self, u, v, cost):
+        if u not in self.graph:
+            self.graph[u] = []
+        if v not in self.graph:
+            self.graph[v] = []
+        self.graph[u].append((v, cost))
+        self.graph[v].append((u, cost))  # Assuming an undirected graph
+
+    def set_heuristic(self, node, value):
+        self.heuristic[node] = value
+
+    def a_star_search(self, start, goal):
+        priority_queue = [(0 + self.heuristic[start], 0, start, [])]
+        visited = set()
+
+        while priority_queue:
+            estimated_cost, cost, node, path = heapq.heappop(priority_queue)
+
+            if node in visited:
+                continue
+            visited.add(node)
+            path = path + [node]
+
+            if node == goal:
+                return path, cost
+
+            for neighbor, edge_cost in self.graph.get(node, []):
+                if neighbor not in visited:
+                    heapq.heappush(priority_queue, (cost + edge_cost + self.heuristic.get(neighbor, 0), 
+                                                    cost + edge_cost, neighbor, path))
+
+        return None, float('inf')
+
+# User input to construct the graph
+graph = Graph()
+edges = int(input("Enter number of edges: "))
+
+print("Enter edges (node1 node2 cost):")
+for _ in range(edges):
+    u, v, cost = input().split()
+    graph.add_edge(u, v, int(cost))
+
+heuristic_nodes = int(input("Enter number of heuristic values: "))
+print("Enter heuristic values (node value):")
+for _ in range(heuristic_nodes):
+    node, value = input().split()
+    graph.set_heuristic(node, int(value))
+
+start_node = input("Enter the start node: ")
+goal_node = input("Enter the goal node: ")
+
+path, total_cost = graph.a_star_search(start_node, goal_node)
+
+if path:
+    print(f"Optimal path: {path}")
+    print(f"Total cost: {total_cost}")
+else:
+    print("No path found.")
+
+
+
+----------output------------------
+
+Enter number of edges: 9
+Enter edges (node1 node2 cost):
+S S 0
+S B 4
+S C 3
+C E 10
+C D 7
+B F 5
+B E 12
+D E 2
+E G 5
+Enter number of heuristic values: 7
+Enter heuristic values (node value):
+S 14
+B 12
+C 11
+D 6
+E 4
+F 11
+G 0
+Enter the start node: S
+Enter the goal node: G
+Optimal path: ['S', 'C', 'D', 'E', 'G']
+Total cost: 17
+
+
+
+
+
+-------------------------theory------------------
+A* (A-Star) is an informed search algorithm used for pathfinding and graph traversal. It finds the shortest path between a start node and a goal node using a combination of:
+•	Cost to reach a node (g) → Actual cost from the start node.
+•	Estimated cost to goal (h) → Heuristic function estimating the remaining cost.
+The total cost function is:
+f(n)=g(n)+h(n)f(n) = g(n) + h(n)
+Where:
+•	g(n)g(n) → Cost from start node to current node.
+•	h(n)h(n) → Estimated cost from current node to goal.
+A* is widely used in game development, robotics, and navigation systems because it efficiently finds optimal paths.
+Algorithm Steps
+1.	Initialize an open list (priority queue) with the start node.
+2.	Initialize a closed list (visited nodes).
+3.	Loop until goal is found or open list is empty:
+o	Select the node with the lowest f(n) from the open list.
+o	Move it to the closed list.
+o	Expand its neighbors:
+	If neighbor is the goal → Stop.
+	If neighbor is not in the closed list → Compute g(n)g(n), h(n)h(n), and f(n)f(n).
+	Add neighbor to open list if it has a better cost.
+4.	Repeat until the shortest path is found.
