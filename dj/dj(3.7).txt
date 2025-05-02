@@ -1,0 +1,104 @@
+import heapq
+
+class Graph:
+    def __init__(self):
+        self.graph = {}
+
+    def add_edge(self, u, v, weight):
+        if u not in self.graph:
+            self.graph[u] = []
+        if v not in self.graph:
+            self.graph[v] = []
+        self.graph[u].append((v, weight))
+        self.graph[v].append((u, weight))  # Assuming an undirected graph
+
+    def dijkstra(self, start):
+        priority_queue = [(0, start)]
+        distances = {node: float('inf') for node in self.graph}
+        distances[start] = 0
+
+        while priority_queue:
+            current_distance, current_node = heapq.heappop(priority_queue)
+
+            if current_distance > distances[current_node]:
+                continue
+
+            for neighbor, weight in self.graph[current_node]:
+                distance = current_distance + weight
+
+                if distance < distances[neighbor]:
+                    distances[neighbor] = distance
+                    heapq.heappush(priority_queue, (distance, neighbor))
+
+        return distances
+
+# User input for graph construction
+graph = Graph()
+edges = int(input("Enter number of edges: "))
+
+print("Enter edges (node1 node2 weight):")
+for _ in range(edges):
+    u, v, weight = input().split()
+    graph.add_edge(u, v, int(weight))
+
+start_node = input("Enter the start node: ")
+shortest_paths = graph.dijkstra(start_node)
+
+print(f"Shortest paths from {start_node}:")
+for node, distance in shortest_paths.items():
+    print(f"{node}: {distance}")
+
+
+---------------OUTPUT------------
+Enter number of edges: 15
+Enter edges (node1 node2 weight):
+A B 2
+A C 4
+A D 5
+B E 3
+B C 1
+B F 1
+C F 2
+D C 2
+D F 1
+D G 2
+E F 2
+E Z 3
+F Z 7
+G F 4
+G Z 1
+Enter the start node: A
+Shortest paths from A:
+A: 0
+B: 2
+C: 3
+D: 4
+E: 5
+F: 3
+G: 6
+Z: 7
+
+
+
+Dijkstra's Algorithm is a graph traversal algorithm used to find the shortest path from a source node to all other nodes in a weighted graph. It was developed by Edsger W. Dijkstra in 1956 and is widely used in network routing, AI pathfinding, and transportation systems.
+Key Concepts
+•	Single-Source Shortest Path → Finds the shortest path from one node to all others.
+•	Greedy Algorithm → Always selects the node with the smallest known distance.
+•	Priority Queue (Heap) → Efficiently selects the next node to process.
+•	Non-Negative Weights → Works best when edge weights are positive.
+Time Complexity
+O((V+E)log V
+Space complexitity
+O(V+E)
+Algorithm Steps
+1.	Initialize:
+o	Set all node distances to infinity, except the start node (0).
+o	Use a priority queue to track the node with the smallest distance.
+2.	Process Nodes:
+o	Extract the node with the smallest distance from the priority queue.
+o	Update distances for its neighbors if a shorter path is found.
+o	Push updated distances into the priority queue.
+3.	Repeat Until All Nodes Are Processed.
+
+
+
