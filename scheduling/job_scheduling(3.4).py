@@ -1,0 +1,31 @@
+class Job:
+    def __init__(self, id, deadline, profit):
+        self.id = id
+        self.deadline = deadline
+        self.profit = profit
+
+def job_scheduling(jobs, n):
+    jobs.sort(key=lambda x: x.profit, reverse=True)  # Sort jobs by profit in descending order
+    result = [None] * n
+    slot = [False] * n
+
+    for job in jobs:
+        for j in range(min(n, job.deadline) - 1, -1, -1):
+            if not slot[j]:
+                slot[j] = True
+                result[j] = job.id
+                break
+
+    return [job for job in result if job]
+
+# Taking user input
+num_jobs = int(input("Enter number of jobs: "))
+jobs = []
+
+print("Enter job details (ID Deadline Profit):")
+for _ in range(num_jobs):
+    job_id, deadline, profit = input().split()
+    jobs.append(Job(job_id, int(deadline), int(profit)))
+
+scheduled_jobs = job_scheduling(jobs, num_jobs)
+print("Scheduled Jobs:", scheduled_jobs)
