@@ -1,0 +1,120 @@
+from collections import deque
+
+class Graph:
+    def __init__(self):
+        self.graph = {}
+
+    def add_edge(self, u, v):
+        if u not in self.graph:
+            self.graph[u] = []
+        if v not in self.graph:
+            self.graph[v] = []
+        self.graph[u].append(v)
+        self.graph[v].append(u)  # Since it's an undirected graph
+
+    def dfs_recursive(self, node, visited, result):
+        if node not in visited:
+            visited.add(node)
+            result.append(node)
+            for neighbor in self.graph.get(node, []):
+                self.dfs_recursive(neighbor, visited, result)
+
+    def bfs(self, start):
+        visited = set()
+        queue = deque([start])
+        result = []
+
+        while queue:
+            node = queue.popleft()
+            if node not in visited:
+                visited.add(node)
+                result.append(node)
+                queue.extend(self.graph.get(node, []))
+
+        return result
+
+    def perform_searches(self, start):
+        dfs_result = []
+        self.dfs_recursive(start, set(), dfs_result)
+        bfs_result = self.bfs(start)
+
+        print(f"Depth First Search (DFS) starting from {start}: {dfs_result}")
+        print(f"Breadth First Search (BFS) starting from {start}: {bfs_result}")
+
+# Taking user input to construct the graph
+graph = Graph()
+edges = int(input("Enter number of edges: "))
+
+print("Enter edges (node1 node2):")
+for _ in range(edges):
+    u, v = input().split()
+    graph.add_edge(u, v)
+
+start_node = input("Enter the starting node for search: ")
+graph.perform_searches(start_node)
+
+
+
+
+
+
+-------------------output--------------------
+
+Enter number of edges: 6
+Enter edges (node1 node2):
+A B
+A C
+B D
+B E
+C F
+C G
+Enter the starting node for search: A
+Depth First Search (DFS) starting from A: ['A', 'B', 'D', 'E', 'C', 'F', 'G']
+Breadth First Search (BFS) starting from A: ['A', 'B', 'C', 'D', 'E', 'F', 'G']
+
+
+
+
+BFS_DFS
+Breadth First Search (BFS) is a fundamental graph traversal algorithm that explores all neighbors of a node before moving to their neighbors. BFS guarantees finding the shortest path in unweighted graphs, making it widely used in network analysis, shortest path algorithms, and AI search problems.
+
+Logic Behind BFS:
+•	Uses a queue (FIFO) for traversal.
+•	Starts at a given node, visits all adjacent nodes first before 	proceeding to the next level.
+•	Keeps track of visited nodes to avoid cycles.
+
+Algorithm:
+
+1.	Start from the given node, mark it as visited, and enqueue it.
+2.	While the queue is not empty:
+o	Dequeue a node.
+o	Process the node.
+o	Enqueue all its unvisited adjacent nodes.
+3.	Repeat until all nodes are visited.
+Time Complexity: O(V+E)O(V + E)
+Space Complexity: O(V)
+ 
+
+DFS
+Depth First Search (DFS) is a graph traversal algorithm that explores as far as possible along each branch before backtracking. It follows a depthward motion, meaning it goes deep into a node’s neighbors before moving to another branch.
+
+Logic Behind DFS:
+•	Uses a stack (either explicit or recursion) for traversal.
+•	Starts at a given node, visits one neighbor deeply before moving to 	another.
+•	Keeps track of visited nodes to avoid cycles.
+
+Algorithm:
+1.	Start from the given node, mark it as visited.
+2.	Recursively visit all unvisited adjacent nodes.
+3.	If all adjacent nodes are visited, backtrack.
+4.	Repeat until all nodes are visited.
+Time Complexity: O(V+E)O(V + E)
+Space Complexity: O(V)O(V) (due to recursion stack)
+ 
+ 
+
+
+
+
+
+
