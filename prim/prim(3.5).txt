@@ -1,0 +1,112 @@
+import heapq
+
+class Graph:
+    def __init__(self):
+        self.graph = {}
+
+    def add_edge(self, u, v, weight):
+        if u not in self.graph:
+            self.graph[u] = []
+        if v not in self.graph:
+            self.graph[v] = []
+        self.graph[u].append((v, weight))
+        self.graph[v].append((u, weight))  # Since it's an undirected graph
+
+    def prim_mst(self, start):
+        min_heap = [(0, start)]  # (weight, vertex)
+        visited = set()
+        mst = []
+        total_cost = 0
+
+        while len(visited) < len(self.graph):
+            weight, u = heapq.heappop(min_heap)
+
+            if u in visited:
+                continue
+
+            visited.add(u)
+            total_cost += weight
+
+            for neighbor, edge_weight in self.graph.get(u, []):
+                if neighbor not in visited:
+                    heapq.heappush(min_heap, (edge_weight, neighbor))
+                    mst.append((u, neighbor, edge_weight))
+
+        return mst, total_cost
+
+# User input for graph construction
+graph = Graph()
+edges = int(input("Enter number of edges: "))
+
+print("Enter edges (node1 node2 weight):")
+for _ in range(edges):
+    u, v, weight = input().split()
+    graph.add_edge(u, v, int(weight))
+
+start_node = input("Enter the starting node (alphabetical): ")
+mst, total_cost = graph.prim_mst(start_node)
+
+print("\nMinimum Spanning Tree:")
+for u, v, weight in mst:
+    print(f"{u} -- {v} == {weight}")
+print(f"\nTotal Cost of MST: {total_cost}")
+
+
+-----------------OUTPUT----------------
+Enter number of edges: 13
+Enter edges (node1 node2 weight):
+B A 1
+B C 6
+A D 5
+A C 6
+C E 7
+C F 3
+D G 10
+D F 2
+E H 12
+H G 7
+H I 8
+G I 3
+F H 8
+Enter the starting node (alphabetical): B
+
+Minimum Spanning Tree:
+B -- A == 1
+B -- C == 6
+A -- D == 5
+A -- C == 6
+D -- G == 10
+D -- F == 2
+F -- C == 3
+F -- H == 8
+C -- E == 7
+E -- H == 12
+H -- G == 7
+H -- I == 8
+G -- I == 3
+
+Total Cost of MST: 36
+
+
+
+---------------theoroy--------------
+Prim's Algorithm is a greedy algorithm used to find the Minimum Spanning Tree (MST) of a weighted, connected, undirected graph. The MST is a subset of the graph that connects all vertices with the minimum possible total edge weight, ensuring no cycles.
+Key Characteristics:
+•	Greedy Approach → Always picks the smallest edge that connects a new vertex.
+•	Incremental Growth → Starts with a single vertex and expands the MST one edge at a time.
+•	Efficient for Dense Graphs → Works well when the number of edges is large.
+Algorithm Steps
+1.	Initialize:
+o	Start from any vertex.
+o	Maintain a visited set to track included vertices.
+o	Use a priority queue (min-heap) to select the smallest edge.
+2.	Expand MST:
+o	Pick the smallest edge that connects a new vertex.
+o	Add the vertex to the visited set.
+o	Add its edges to the priority queue.
+3.	Repeat Until All Vertices Are Included.
+
+DSA ised
+Priority Queue (Min-Heap) → Efficiently selects the smallest edge
+
+Time and space :- O(V2)
