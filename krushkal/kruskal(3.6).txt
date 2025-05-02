@@ -1,0 +1,88 @@
+class Graph:
+    def __init__(self):
+        self.edges = []
+        self.nodes = set()  # Stores unique nodes
+
+    def add_edge(self, u, v, weight):
+        self.edges.append((weight, u, v))
+        self.nodes.add(u)
+        self.nodes.add(v)
+
+    def find_parent(self, parent, node):
+        if parent[node] == node:
+            return node
+        return self.find_parent(parent, parent[node])
+
+    def union(self, parent, rank, x, y):
+        root_x = self.find_parent(parent, x)
+        root_y = self.find_parent(parent, y)
+
+        if rank[root_x] < rank[root_y]:
+            parent[root_x] = root_y
+        elif rank[root_x] > rank[root_y]:
+            parent[root_y] = root_x
+        else:
+            parent[root_y] = root_x
+            rank[root_x] += 1
+
+    def kruskal_mst(self):
+        self.edges.sort()  # Sort edges by weight
+        parent = {node: node for node in self.nodes}
+        rank = {node: 0 for node in self.nodes}
+        mst = []
+        total_cost = 0
+
+        for weight, u, v in self.edges:
+            root_u = self.find_parent(parent, u)
+            root_v = self.find_parent(parent, v)
+
+            if root_u != root_v:
+                mst.append((u, v, weight))
+                total_cost += weight  # Accumulate total cost
+                self.union(parent, rank, root_u, root_v)
+
+        return mst, total_cost
+
+# User input for graph construction
+graph = Graph()
+edges = int(input("Enter number of edges: "))
+
+print("Enter edges (node1 node2 weight):")
+for _ in range(edges):
+    u, v, weight = input().split()
+    graph.add_edge(u, v, int(weight))
+
+mst, total_cost = graph.kruskal_mst()
+print("\nMinimum Spanning Tree:")
+for u, v, weight in mst:
+    print(f"{u} -- {v} == {weight}")
+
+print(f"\nTotal Cost of MST: {total_cost}")
+
+
+----------------OUTPUT-----------------
+Enter number of edges: 12
+Enter edges (node1 node2 weight):
+A B 5
+A C 3
+B E 2
+B C 4
+B D 6
+C D 5
+C F 6
+D F 6
+D E 6
+E F 3
+E G 4
+F G 4
+
+Minimum Spanning Tree:
+B -- E == 2
+A -- C == 3
+E -- F == 3
+B -- C == 4
+E -- G == 4
+C -- D == 5
+
+Total Cost of MST: 21
+
